@@ -20,14 +20,15 @@ module.exports = (robot) ->
 
     trackUrl(user, room, url)
 
-  robot.respond /(show )?latest links/, (msg) ->
+  robot.respond /(?:show )?latest links(?: (?:on|for) ([^ ]+))?/, (msg) ->
+    room = msg.match[1] || msg.message.room
     msg.send(
-      if data[msg.message.room]?
-        list = data[msg.message.room].slice(0, 5).map ([user, url, time]) ->
+      if data[room]?
+        list = data[room].slice(0, 5).map ([user, url, time]) ->
           date = new Date(time)
           date = "#{date.getMonth() + 1}/#{date.getDate()} #{date.getHours()}:#{date.getMinutes()}"
           "#{url} by #{user}, #{date}"
-        "Latest links:\n\n#{list.join("\n")}"
+        "Latest links on ##{room}:\n\n#{list.join("\n")}"
       else
         "No links yet."
     )
